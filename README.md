@@ -5,7 +5,7 @@
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-1f6feb" alt="MIT license"></a>
   <a href="https://github.com/kulchankas/paranoid/actions/workflows/benchmark.yml"><img src="https://github.com/kulchankas/paranoid/actions/workflows/benchmark.yml/badge.svg" alt="benchmark self-test"></a>
-  <img src="https://img.shields.io/badge/runs%20in-Claude%20Code%20·%20Codex%20·%20Cursor-8957e5" alt="Runs in Claude Code, Codex, Cursor">
+  <img src="https://img.shields.io/badge/runs%20in-Claude%20Code%20·%20Codex%20·%20Cursor-1f6feb" alt="Runs in Claude Code, Codex, Cursor">
   <img src="https://img.shields.io/badge/proofs-localhost%20only-3fb950" alt="Localhost-only proofs">
   <a href="https://github.com/kulchankas/paranoid/stargazers"><img src="https://img.shields.io/github/stars/kulchankas/paranoid?style=social" alt="GitHub stars"></a>
 </p>
