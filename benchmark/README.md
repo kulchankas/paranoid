@@ -100,7 +100,7 @@ build.
 
 ## Task classes
 
-Twenty-three classes have a neutral spec + functional + exploit check today:
+Twenty-four classes have a neutral spec + functional + exploit check today:
 `idor_invoices`, `idor_session_only`, `missing_auth_admin`, `sqli_login`,
 `mass_assignment_update`, `path_traversal_note`, `ssrf_url_preview`,
 `xss_comment_render`, `command_injection_ping`, `open_redirect_login`,
@@ -108,11 +108,17 @@ Twenty-three classes have a neutral spec + functional + exploit check today:
 `template_injection_notice`, `xxe_item_parse`, `unrestricted_file_upload`,
 `permissive_cors_origin`, `weak_password_storage`, `redos_username_validate`,
 `webhook_event_apply`, `insecure_deserialization`, `ssrf_dns_rebinding`,
-`session_cookie_flags`. All twenty-three are covered by the insecure/secure
-self-test above (100% / 0%). As of 2026-09-21 twenty-two of them have also been
-scored against a model in both conditions — see the blinded run in *Result*;
-`session_cookie_flags` is harness-verified and awaiting a model-condition run
-(honesty rule: no model number until the harness produces one).
+`session_cookie_flags`, `idor_route_wiring`. All twenty-four are covered by the
+insecure/secure self-test above (100% / 0%). As of 2026-09-21 twenty-two of them
+have also been scored against a model in both conditions — see the blinded run in
+*Result*; `session_cookie_flags` and `idor_route_wiring` are harness-verified and
+awaiting a model-condition run (honesty rule: no model number until the harness
+produces one).
+
+`idor_route_wiring` is the first task whose bug isn't visible in any single
+function — it only exists in how two routes are wired, one checking ownership and
+the other not. That is the regime the +0pp result above does *not* cover, so it is
+the one most worth scoring next.
 
 Machine-readable output: add `--json` to any `run.py` invocation to get a single
 JSON summary (per-condition rates + delta) instead of the human tables — handy for
