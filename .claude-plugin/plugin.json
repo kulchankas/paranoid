@@ -1,6 +1,6 @@
 {
   "name": "paranoid",
-  "description": "Pentests the app you're building: /hack-me attacks your own running app, proves each finding with a real request, patches the root cause, and re-verifies by replaying the exploit.",
+  "description": "Finds and fixes vulnerabilities in the app you're building. /hack-me probes your own running app on localhost, proves each finding with a real request, patches the root cause, and re-verifies by replaying the exploit. Authorized targets only, non-destructive, no telemetry.",
   "version": "0.1.0",
   "author": {
     "name": "kulchankas",

@@ -28,11 +28,19 @@ until that exact exploit stops working.
 
 ## Quickstart
 
-**Claude Code** — one install, gets you the skill *and* the `/hack-me` command:
+**Claude Code** — one install, gets you the skill *and* the pentest loop:
 
 ```bash
 /plugin marketplace add kulchankas/paranoid
 /plugin install paranoid@paranoid
+```
+
+Then start your app and point it at the loop — plugin skills are namespaced, so
+it's `/paranoid:hack-me` here:
+
+```bash
+python3 my_app.py     # your app, running locally
+/paranoid:hack-me     # → http://localhost:<port>
 ```
 
 **Codex, Cursor, or any agent that reads skills:**
@@ -41,15 +49,8 @@ until that exact exploit stops working.
 npx skills add kulchankas/paranoid/skills/paranoid
 ```
 
-then copy [`commands/hack-me.md`](commands/hack-me.md) into your agent's commands
-directory (e.g. `.claude/commands/`).
-
-Start your app and point the agent at it:
-
-```bash
-python3 my_app.py     # your app, running locally
-/hack-me              # → http://localhost:<port>
-```
+Copy [`commands/hack-me.md`](commands/hack-me.md) into your agent's commands
+directory (e.g. `.claude/commands/`) and it's plain `/hack-me`.
 
 No dependencies, no network calls, no telemetry — it's Markdown your agent reads.
 
