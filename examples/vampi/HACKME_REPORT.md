@@ -17,7 +17,11 @@ Seed accounts created by `GET /createdb`: `name1/pass1`, `name2/pass2`,
 `admin/pass1`. Throwaway accounts (`atk_*`, `vic_*`, `esc_*`) were registered by
 the test itself; no real data was destroyed.
 
-**Result: 6 vulnerabilities proven; all closed and re-verified.**
+**Result: 6 vulnerabilities proven; all closed and re-verified.** A later
+[step-7 sweep](#step-7-sweep--a-seventh-issue-the-six-finding-run-never-probed)
+also found a ReDoS the original pass never probed — measured, but not proven with
+a live request, and reported at that lower evidence level on purpose. Scope and
+limits: [below](#scope--and-what-this-proof-does-and-doesnt-claim).
 
 VAmPI ships a global `vulnerable=1|0` switch. Part of the value here is showing
 that flipping it to "secure" closes **four** of the six, but **not** the debug
@@ -270,6 +274,70 @@ wide open, because a single global flag doesn't cover the endpoints someone
 forgot to wire into it. `/hack-me` didn't take the flag's word for it: it
 replayed every exploit and only marked a finding closed when the original
 request failed.
+
+## Step 7 sweep — a seventh issue the six-finding run never probed
+
+Re-running this report through the [`/hack-me` sweep step](../../commands/hack-me.md)
+(added after this project's DVWA run showed the loop could leave a sibling code
+path live) turned up one the original black-box pass missed, because no request
+in that pass touched the email-update route in a way that would trigger it.
+
+**Finding 7 — ReDoS in the vuln-mode email validator (`PUT /users/v1/{username}/email`)**
+
+- **Class:** Regular-expression denial of service (OWASP API4, unrestricted
+  resource consumption)
+- **Severity:** Medium
+
+`update_email` validates the address with, in `vulnerable=1` mode:
+
+```python
+# api_views/users.py
+r"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@{1}([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$"
+```
+
+The `([-.\w]*[0-9a-zA-Z])*` group nests a quantifier inside a quantified group
+over an overlapping character class — the classic catastrophic-backtracking
+shape. An input with a long run of matching characters and no final `@` forces
+exponential backtracking.
+
+### Evidence — and its limit, stated honestly
+
+This is **not** delivered here as a live HTTP request, and it would be dishonest
+to put it in the summary table beside the six that were. It is measured against
+the exact regex lifted from source, with a self-aborting 10-second bound (no live
+service was hung — see the note on non-destructive proofs below):
+
+```
+input                     vuln regex      non-vuln regex
+"a"*14 + "!"  (15 bytes)     0.001s          0.000063s
+"a"*18 + "!"  (19 bytes)     0.008s          0.000004s
+"a"*22 + "!"  (23 bytes)     0.123s          0.000006s
+"a"*26 + "!"  (27 bytes)     1.943s          0.000008s
+"a"*30 + "!"  (31 bytes)    >10s (aborted)   0.000008s
+```
+
+Clean exponential growth — roughly 16× per four added characters — so a request
+body well under 100 bytes drives one worker past ten seconds. VAmPI's own
+`vulnerable=0` regex is linear and unaffected, so flipping secure mode closes it;
+that is why it sits in the same "a global flag isn't security" story as the rest.
+
+Reported at this evidence level on purpose: the sweep **found** it and a bounded
+local measurement **confirms the blowup**, but it was **not proven with a live
+request** in this pass, and the report says exactly that rather than rounding it
+up to "7 proven." That distinction is the point of step 7.
+
+## Scope — and what this proof does *and* doesn't claim
+
+- **This is blind discovery.** Unlike [`../dvwa`](../dvwa/HACKME_REPORT.md), VAmPI
+  publishes no list of its bugs to the agent driving the run; the six were found
+  from the base URL and the seed step alone. That is the stronger of the two
+  proofs on the *find* step.
+- **Seven issues, not a clean bill of health.** Six proven with live requests,
+  one (the ReDoS above) found by the sweep and measured but not separately proven
+  with a request. Other classes VAmPI is known to carry (e.g. JWT handling) were
+  not exercised in this run.
+- **Two builds.** `vulnerable=1` throughout, with `vulnerable=0` used only to show
+  which findings the global flag does and doesn't close.
 
 ### Reproduce
 
