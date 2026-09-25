@@ -174,9 +174,12 @@ Load it while building; run `/hack-me` to check whether it held.
 
 A reproducible harness for *"does a security skill actually reduce
 vulnerabilities?"* — 24 vulnerability classes, each with a neutral spec, a
-functional check and a real exploit check. All 22 have been scored against a
-model in both conditions, blinded; the raw solutions are committed so anyone can
-re-score them. CI asserts on every push that the deliberately-insecure references
+functional check and a real exploit check. 22 of the 24 have been scored against a
+model in both conditions, blinded (the other two — route-wiring IDOR and
+session-cookie-flags — are harness-verified and awaiting a model run, and
+route-wiring is the one most likely to move the result: [#23](https://github.com/kulchankas/paranoid/issues/23));
+the raw solutions are committed so anyone can re-score them. CI asserts on every
+push that the deliberately-insecure references
 still score 100% and the secure ones 0%, so the benchmark can't silently rot.
 Details, caveats and how to re-run it: [`benchmark/`](benchmark).
 
@@ -192,8 +195,8 @@ or produce live malware, and it will decline to. See [SECURITY.md](SECURITY.md).
 - [x] `/hack-me` loop — find → prove → patch → re-verify, on localhost
 - [x] Reproducible skill-efficacy benchmark + the honest result behind the pivot
 - [x] Independent-app proof — [OWASP VAmPI](examples/vampi): 6 real bugs found, fixed & re-verified
-- [x] 24 benchmark task classes (IDOR, missing auth, SQLi, mass assignment, path traversal, SSRF, XSS, command injection, open redirect, JWT auth, leaked secrets, CSRF, template injection, XXE, unrestricted upload, permissive CORS, weak password storage, ReDoS, unverified webhooks, insecure deserialization, SSRF via DNS-rebinding, route-wiring IDOR, session cookie flags)
-- [x] `/hack-me` framework guides — 10 stacks
+- [x] 24 benchmark task classes (IDOR — object-level, session-scoped, and route-wiring; missing auth; SQLi; mass assignment; path traversal; SSRF; SSRF via DNS-rebinding; XSS; command injection; open redirect; JWT auth; leaked secrets; CSRF; template injection; XXE; unrestricted upload; permissive CORS; weak password storage; ReDoS; unverified webhooks; insecure deserialization; session cookie flags)
+- [x] `/hack-me` framework guides — 12 stacks
 - [x] A second independent-app proof — [DVWA](examples/dvwa): 6 real bugs found, fixed & re-verified on a PHP/MariaDB stack
 - [ ] A third proof on a target that publishes no bug list, so the *find* step has to earn it
 - [x] SSRF via DNS-rebinding task class
