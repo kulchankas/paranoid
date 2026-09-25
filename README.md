@@ -19,8 +19,9 @@ running app the way an attacker would, then closes what it finds:
 find  →  prove  →  patch  →  re-verify
 ```
 
-Nothing is called a bug until a real HTTP request proves it, and no fix is done
-until that exact exploit stops working.
+Nothing is called a bug until a real HTTP request proves it, no fix is done until
+that exact exploit stops working, and no class is closed until the same pattern is
+swept from the paths no probe touched.
 
 <p align="center">
   <img src="assets/hack-me-demo.svg" alt="hack-me finds, proves, patches and re-verifies four real vulnerabilities in a running app" width="760">
@@ -105,6 +106,16 @@ requests and diffs: [`examples/ledgerlite/HACKME_REPORT.md`](examples/ledgerlite
 3. **Proves** every finding with the actual request/response (no theorizing).
 4. **Patches** the root cause with a minimal, behavior-preserving fix.
 5. **Re-verifies** by replaying the exact exploit — a finding isn't closed until it fails.
+6. **Sweeps** for the same bug on paths no probe touched — a sibling branch, the
+   same resource under a different method, a `/v1` copy, a cron job that reaches
+   the same sink. A green re-verify proves the *request* is dead, not the class.
+
+Step 6 exists because the loop got caught by exactly that: in our own DVWA run an
+SQL injection was proven, patched and re-verified green while an identical
+injection sat in the same file, in the branch for the other database backend.
+Review caught it; the loop hadn't. Anything the sweep fixes but can't reach with a
+request is reported as *"same pattern, fixed, not separately proven"* — never as
+verified.
 
 It knows where routes and auth live in twelve stacks (Next.js, FastAPI, Express,
 Django, Rails, Flask, Spring Boot, Laravel, Phoenix, Go, NestJS, ASP.NET Core) — see
