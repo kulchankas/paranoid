@@ -89,10 +89,20 @@ fs.readFile(path.join(UPLOAD_DIR, req.query.name));
 const name = path.basename(req.query.name);
 const full = path.resolve(UPLOAD_DIR, name);
 if (!full.startsWith(path.resolve(UPLOAD_DIR) + path.sep)) throw new Error('bad path');
+// symlinks escape a lexical check — resolve the real path when the dir may hold them
+const real = await fs.promises.realpath(full);
+if (!real.startsWith(path.resolve(UPLOAD_DIR) + path.sep)) throw new Error('bad path');
 ```
 
-- `path.basename` drops `../`; the `startsWith(resolvedDir)` check catches the
-  rest (symlinks, absolute paths). Never serve files by a raw client path.
+- `path.basename` drops `../`, and the `startsWith(resolvedDir + sep)` check
+  rejects absolute paths and lexical `../` escapes. It does **not** catch
+  symlinks: `path.resolve` is a pure string operation that never touches disk, so
+  a symlink *inside* `UPLOAD_DIR` pointing at `/etc` still passes it. When the
+  directory can contain symlinks (a prior upload, an extracted archive), resolve
+  the real path with `fs.realpath` and check containment on that — as the second
+  check above does. (`realpath` needs the file to exist, which a read already
+  requires; for a write target, realpath the *directory* instead.) Never serve
+  files by a raw client path.
 - For uploads: allow-list extensions/MIME, generate your own filename, store
   outside the web root, and cap the size.
 
