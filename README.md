@@ -99,6 +99,26 @@ Every legitimate request still returns `200` afterwards. Reproduce it yourself:
 `python3 examples/ledgerlite/app.py`, then run `/hack-me`. Walkthrough with exact
 requests and diffs: [`examples/ledgerlite/HACKME_REPORT.md`](examples/ledgerlite/HACKME_REPORT.md).
 
+### On a shop with no exploit menu
+
+[DVWA](examples/dvwa) lists its bug categories in the navigation, so that run
+tests the fix loop, not discovery. [VulnShop](https://github.com/dev-abhrajit/VulnShop)
+renders as a store (NexCart): products, search, account. Pointed at that UI,
+`/hack-me` proved five bugs and re-verified each — including a product-id
+`UNION` that printed every seed password, and a login of `admin' OR '1'='1`
+that came back as an admin session:
+
+| # | Finding | Status |
+|---|---------|:--:|
+| 1 | `/products?id=` dumps every password | **empty listing** |
+| 2 | Login bypass to an admin session | **no session** |
+| 3 | Search reflects raw HTML | **escaped** |
+| 4 | Any logged-in user opens `/admin` | **403** |
+| 5 | Profile save with no CSRF token | **400** |
+
+The upstream README names those classes, so this is not a fully blind-to-the-repo
+find. Receipts: [`examples/vulnshop/HACKME_REPORT.md`](examples/vulnshop/HACKME_REPORT.md).
+
 ## What `/hack-me` actually does
 
 1. **Maps** your running app and picks the risk classes it's exposed to.
@@ -198,7 +218,7 @@ or produce live malware, and it will decline to. See [SECURITY.md](SECURITY.md).
 - [x] 24 benchmark task classes (IDOR — object-level, session-scoped, and route-wiring; missing auth; SQLi; mass assignment; path traversal; SSRF; SSRF via DNS-rebinding; XSS; command injection; open redirect; JWT auth; leaked secrets; CSRF; template injection; XXE; unrestricted upload; permissive CORS; weak password storage; ReDoS; unverified webhooks; insecure deserialization; session cookie flags)
 - [x] `/hack-me` framework guides — 12 stacks
 - [x] A second independent-app proof — [DVWA](examples/dvwa): 6 real bugs found, fixed & re-verified on a PHP/MariaDB stack
-- [ ] A third proof on a target that publishes no bug list, so the *find* step has to earn it
+- [x] A third proof on a shop UI with no in-app exploit menu — [VulnShop](examples/vulnshop). Its README still names the classes, so a target that publishes **no** bug list anywhere is still open
 - [x] SSRF via DNS-rebinding task class
 - [x] Session-cookie-flags task class
 

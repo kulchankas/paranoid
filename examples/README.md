@@ -1,6 +1,6 @@
 # Examples — `/hack-me`, proven
 
-Three worked runs of the `/hack-me` loop (find → prove → patch → re-verify), from
+Four worked runs of the `/hack-me` loop (find → prove → patch → re-verify), from
 easiest-to-trust to hardest:
 
 | Example | Target | Why it's here | Findings |
@@ -8,6 +8,7 @@ easiest-to-trust to hardest:
 | [`ledgerlite`](ledgerlite) | our own tiny invoicing API | proves the **loop** works end-to-end, with before/after source | 4 fixed |
 | [`vampi`](vampi) | [OWASP VAmPI](https://github.com/erev0s/VAmPI) — a third-party vulnerable API | proves it works on an app **we didn't write**, with live receipts | 6 fixed |
 | [`dvwa`](dvwa) | [DVWA](https://github.com/digininja/DVWA) — a third-party vulnerable **web app** (PHP/MariaDB) | second independent-app proof; a different **stack** and request shape (forms, cookies, redirects). Not blind discovery — DVWA lists its own bug categories — so it proves *prove → patch → re-verify*, not *find* | 6 fixed |
+| [`vulnshop`](vulnshop) | [VulnShop](https://github.com/dev-abhrajit/VulnShop) — a third-party Flask shop (UI brand: NexCart) | third proof. The shop navigation does not list exploits. The upstream README does name the classes, so this is not a fully unlabeled repo | 5 fixed |
 
 Each folder has a `HACKME_REPORT.md` with the exact exploit request, the response
 that proves it, the fix, and the re-verification of the same request.

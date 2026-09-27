@@ -40,21 +40,20 @@ from the templates) before starting.
    the output paths may name the vulnerability), the raw solutions are committed,
    and the report states model and date.
 
-3. **Independent proof: a target that doesn't advertise its bugs.** Two apps are
-   done — [`examples/vampi`](examples/vampi) and [`examples/dvwa`](examples/dvwa),
-   6 findings each. The gap: DVWA lists its own vulnerability categories in its
-   navigation, so it tests *prove → patch → re-verify*, not *find*. The valuable
-   third proof is a vulnerable app that publishes **no** bug list, where the
-   discovery step has to earn it. *Done when* every finding shows a real
-   request/response and a re-verified fix, and the report states what was in scope
-   and what wasn't.
+3. **Independent proof: a target that publishes no bug list at all.** Three apps
+   are done — [`examples/vampi`](examples/vampi), [`examples/dvwa`](examples/dvwa),
+   and [`examples/vulnshop`](examples/vulnshop). VulnShop's *UI* is a shop with no
+   exploit menu, but its README still names the classes. The remaining gap is a
+   vulnerable app whose repo and UI both publish **no** bug list, so discovery has
+   to earn it. *Done when* every finding shows a real request/response and a
+   re-verified fix, and the report states what was in scope and what wasn't.
 
 Recently shipped: CSRF, template-injection, XXE, unrestricted-upload,
 permissive-CORS, weak-password-storage, ReDoS, unverified-webhook,
 insecure-deserialization, SSRF via DNS-rebinding, route-wiring IDOR, and session-cookie-flags
 task classes; the Flask, Spring Boot, Laravel, Phoenix, NestJS, and ASP.NET Core
 guides; the harness `--json` flag; the all-22-class blinded benchmark run;
-and the DVWA independent-app proof.
+the DVWA independent-app proof, and the VulnShop shop-UI proof.
 
 These map to the issue templates in
 [`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE); label them `good first issue`
